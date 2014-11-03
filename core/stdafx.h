@@ -5,12 +5,15 @@
 
 #pragma once
 
+#define NO_UNICODE
+
 #include "targetver.h"
 
+#include <string>
+#include <cstring>
 #include <iostream>
 #include <fstream>
 #include <cstdlib>
 #include <ctime>
-#include <tchar.h>
 
 // TODO: reference additional headers your program requires here
