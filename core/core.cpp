@@ -29,14 +29,15 @@ void print_usage(char argv0[]) {
 #define A_GREEDY ("greedy")
 
 int main(int argc, char* argv[])
-{
+{	
+	Algorithm *algorithm = NULL;
+
+	// --- PARSING ---
 	enum Source {FILE, GENERATION, STDIN};
 	bool verbose = false;
 	bool save_graph_to_file = false;
 	bool save_result_to_file = false;
 	bool print_graph = false;
-	
-	Algorithm *algorithm = NULL;
 
 	Source source = STDIN;
 	int gargv[3] = {0, 0, 0};
@@ -122,7 +123,7 @@ int main(int argc, char* argv[])
 			break;
 		}
 	}
-
+	// ---------------
 	if (correct_parsing == true)
 	{
 		if (verbose) {
@@ -177,7 +178,7 @@ int main(int argc, char* argv[])
 		}
 
 		delete output;
-		delete algorithm;
+		delete algorithm; 
 	}
 	else
 		print_usage(argv[0]);
