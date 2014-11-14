@@ -10,6 +10,7 @@ private:
 	int value;
 public:
 	Output(int);
+	Output(Output &);
 	~Output();
 	void set_value(int i) {value = i;};
 	void push_cycle(int);
@@ -17,16 +18,24 @@ public:
 	void print_result(std::ostream*, bool);
 };
 
-class Algorithm {
+
+class AdjacencyMatrix {
 private:
-	void _create_matrix(int);
-protected:
-	int number_of_nodes;
+	void _allocate_matrix(int);
+	void _deallocate_matrix();
 	int **matrix;
+	int size;
 public:
-	Algorithm(int, int, int);
-	Algorithm(std::istream*);
-	~Algorithm();
-	virtual Output* perform_calculations();
-	void print_graph(std::ostream*, bool);
+	AdjacencyMatrix(int, int, int);
+	AdjacencyMatrix(std::istream*);
+	AdjacencyMatrix(AdjacencyMatrix &);
+	~AdjacencyMatrix();
+	int get_size();
+	int get_weight(int, int);
+	void print_graph(std::ostream*, bool verbose);
+};
+
+class PlaceholderAlgorithm {
+public:
+	static Output* perform_calculations(AdjacencyMatrix);
 };

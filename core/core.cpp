@@ -1,9 +1,12 @@
-// core.cpp : Defines the entry point for the console application.
+// core.cpp : Parsowanie argumentow wywolania i wykonanie odpowiedniego algorytmu.
 //
 
 #include "stdafx.h"
 #include "algorithms.h"
 #include "Greedy.h"
+#include "BranchAndBound.h"
+#include "BruteForce.h"
+#include "HeldKarpAlgorithm.h"
 
 using namespace std;
 
@@ -24,20 +27,24 @@ void print_usage(char argv0[]) {
 	cout << "\t\t" << "Before performing calculations prints the graph." << endl;
 	cout << "\t" << "saveresult <file name>" << endl;
 	cout << "\t\t" << "Saves non-verbose output to file." << endl;
+	cout << "\t" << "printresult" << endl;
+	cout << "\t\t" << "Prints algorithm's result." << endl;
 }
 
 #define A_GREEDY ("greedy")
+#define A_BNB ("branchandbound")
+#define A_BF ("bruteforce")
+#define A_HKA ("heldkarp")
 
 int main(int argc, char* argv[])
-{	
-	Algorithm *algorithm = NULL;
-
+{
 	// --- PARSING ---
 	enum Source {FILE, GENERATION, STDIN};
 	bool verbose = false;
 	bool save_graph_to_file = false;
 	bool save_result_to_file = false;
 	bool print_graph = false;
+	bool print_result = false;
 
 	Source source = STDIN;
 	int gargv[3] = {0, 0, 0};
@@ -64,7 +71,9 @@ int main(int argc, char* argv[])
 		}
 		// === PARSING ALGORITHM NAME ===
 		else if (strcmp(argv[n], A_GREEDY) == 0 ||
-				 strcmp(argv[n], "dood") == 0)
+				 strcmp(argv[n], A_BNB) == 0 ||
+				 strcmp(argv[n], A_BF) == 0 ||
+				 strcmp(argv[n], A_HKA) == 0)
 			algorithm_name = argv[n];
 		// ==============================
 		else if (strcmp(argv[n], "file") == 0) {
@@ -118,6 +127,8 @@ int main(int argc, char* argv[])
 				break;
 			}
 		}
+		else if (strcmp(argv[n], "printresult") == 0)
+			print_result = true;
 		else {
 			correct_parsing = false;
 			break;
@@ -142,43 +153,51 @@ int main(int argc, char* argv[])
 				cout << "drukuj graf: " << print_graph << endl << endl;
 		}
 
-		istream* input_stream = NULL;
+		AdjacencyMatrix *graph;
 		if (source==STDIN)
-			input_stream = &cin;
+			graph = new AdjacencyMatrix(&cin);
 		else if (source==FILE) {
-			input_stream = new ifstream(input_file_name);
+			istream *input_file = new ifstream(input_file_name);
+			graph = new AdjacencyMatrix(input_file);
+			delete input_file;
+		}
+		else if (source==GENERATION) {
+			graph = new AdjacencyMatrix(gargv[0], gargv[1], gargv[2]);
 		}
 
+		
+		Output *output;
 		// === CREATING ALGORITHM OBJECT ===
 		if (algorithm_name == NULL)
-			algorithm = input_stream ? new Algorithm(input_stream) : new Algorithm(gargv[0], gargv[1], gargv[2]);
+			output = PlaceholderAlgorithm::perform_calculations(*graph);
 		else if (strcmp(algorithm_name, A_GREEDY) == 0)
-			algorithm = input_stream ? new Greedy(input_stream) : new Greedy(gargv[0], gargv[1], gargv[2]);
+			output = GreedyAlgorithm::perform_calculations(*graph);
+		else if (strcmp(algorithm_name, A_BNB) == 0)
+			output = BranchAndBoundAlgorithm::perform_calculations(*graph);
+		else if (strcmp(algorithm_name, A_BF) == 0)
+			output = BruteForceAlgorithm::perform_calculations(*graph);
+		else if (strcmp(algorithm_name, A_HKA) == 0)
+			output = HeldKarpAlgorithm::perform_calculations(graph);
 		// =================================
 
-		if (source==FILE) {
-			delete input_stream;
-		}
-
 		if (print_graph)
-			algorithm->print_graph(&cout, verbose);
+			graph->print_graph(&cout, verbose);
 
 		if (save_graph_to_file) {
 			ofstream* output_file = new ofstream(output_graph_file_name);
-			algorithm->print_graph(output_file, false);
+			graph->print_graph(output_file, false);
 			delete output_file;
 		}
 
-		Output *output = algorithm->perform_calculations();
-		output->print_result(&cout, verbose);
+		if (print_result)
+			output->print_result(&cout, verbose);
 
 		if (save_result_to_file) {
 			ofstream* output_file = new ofstream(output_result_file_name);
 			output->print_result(output_file, false);
 		}
 
-		delete output;
-		delete algorithm; 
+		delete output; 
 	}
 	else
 		print_usage(argv[0]);

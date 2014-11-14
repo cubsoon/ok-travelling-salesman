@@ -1,19 +1,14 @@
 #pragma once
 #include "algorithms.h"
  
-class Greedy :
-	public Algorithm
-{
+class GreedyAlgorithm {
 public:
-	Greedy(int non, int min, int max) : Algorithm(non, min, max) {};
-	Greedy(std::istream* input) : Algorithm(input) {};
-
-	Output* perform_calculations() {
-		Output *output = new Output(number_of_nodes);
+	static Output* perform_calculations(AdjacencyMatrix graph) {
+		Output *output = new Output(graph.get_size());
 		
 		// tablica odwiedzonych wierzcholkow
-		bool *used = new bool[number_of_nodes];
-		for (int i = 1; i < number_of_nodes; i++)
+		bool *used = new bool[graph.get_size()];
+		for (int i = 1; i < graph.get_size(); i++)
 			used[i] = false;
 		
 		// pierwszy odwiedzony wierzcholek - indeks 0
@@ -23,17 +18,17 @@ public:
 
 		int min_v, min_i;
 		int sum_v = 0;
-		for (int n = 0; n < number_of_nodes - 1; n++) {
+		for (int n = 0; n < graph.get_size() - 1; n++) {
 			// wyszukiwanie wiercholka o najkrotszej drodze z poprzedniego
-			for (int i = 0; i < number_of_nodes; i++)
+			for (int i = 0; i < graph.get_size(); i++)
 				if (used[i] == false) {
-					min_v = matrix[last][i];
+					min_v = graph.get_weight(last, i);
 					min_i = i;
 					break;
 				}
-			for (int i = min_i + 1; i < number_of_nodes; i++) 
-				if (used[i] == false && matrix[last][i] < min_v) {
-					min_v = matrix[last][i];
+			for (int i = min_i + 1; i < graph.get_size(); i++) 
+				if (used[i] == false && graph.get_weight(last, i) < min_v) {
+					min_v = graph.get_weight(last, i);
 					min_i = i;
 				}
 
@@ -47,7 +42,7 @@ public:
 		}
 
 		// droga z ostatniego wiercholka do pierwszego (0)
-		sum_v += matrix[last][0];
+		sum_v += graph.get_weight(last, 0);
 
 		output->set_value(sum_v);
 		return output;
