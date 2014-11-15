@@ -177,7 +177,7 @@ int main(int argc, char* argv[])
 		else if (strcmp(algorithm_name, A_BF) == 0)
 			output = BruteForceAlgorithm::perform_calculations(*graph);
 		else if (strcmp(algorithm_name, A_HKA) == 0)
-			output = HeldKarpAlgorithm::perform_calculations(graph);
+			output = HeldKarpAlgorithm::perform_calculations(*graph);
 		// =================================
 
 		if (print_graph)
