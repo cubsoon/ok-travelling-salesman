@@ -60,23 +60,15 @@ private:
 		return set | (1U << pos);
 	}
 
-	static bool get_bit(unsigned int set, unsigned int pos) {
-		if ( set & (1U << pos) )
-			return true;
-		return false;
-	}
+	static bool get_bit(unsigned int set, unsigned int pos);
+	static unsigned int remove_from_set(unsigned int set, unsigned int pos);
 
-	static unsigned int create_subset(unsigned int set, int old_col, int b) {
-		//set 110
-		//oldc 1
-		//b 1
+	static bool is_in_set(unsigned int set, unsigned int pos);
 
-		int newc = 
-	}
+	static unsigned int create_subset(unsigned int set, int old_col, int b);
 
 	static void calculate_tables(AdjacencyMatrix * g) {
 		bool * set = new bool[g->get_size()];
-		for
 		for (unsigned int c = 0; c < cols; c++)
 			B[0][c] = g->get_weight(0, c+1);
 		for (unsigned int r = 1; r < rows; r++) {
