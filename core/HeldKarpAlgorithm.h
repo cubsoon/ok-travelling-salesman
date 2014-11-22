@@ -60,45 +60,7 @@ private:
 		return set | (1U << pos);
 	}
 
-	static bool get_bit(unsigned int set, unsigned int pos);
-	static unsigned int remove_from_set(unsigned int set, unsigned int pos);
-
-	static bool is_in_set(unsigned int set, unsigned int pos);
-
-	static unsigned int create_subset(unsigned int set, int old_col, int b);
-
-	static void calculate_tables(AdjacencyMatrix * g) {
-		bool * set = new bool[g->get_size()];
-		for (unsigned int c = 0; c < cols; c++)
-			B[0][c] = g->get_weight(0, c+1);
-		for (unsigned int r = 1; r < rows; r++) {
-			for (unsigned int c = 0; c < cols; c++) {
-				unsigned int b;
-				int min;
-				for (int t = 0; t < g->get_size(); t++)
-					set[t] = false;
-				for (b = 0; b < rows_s; b++) {
-					if (get_bit(r, b)) {
-						int vert = b + 1;
-						if (vert >= c + 1)
-							vert++;
-						set[vert] = true;
-					}
-					//if ( is_in_set(r, b) ) {
-					//	min = B[create_subset(r, b)][c+1<b ? b+2 : b+1] + g->get_weight(c+1<b ? b+2 : b+1, c+1);
-					//}
-				}
-				unsigned int subset = 0U;
-				for (int t = 0; t < g->get_size(); t++) {
-					if (set[t])
-						int bit = t - 1;
-						if (c <= bit)
-							bit--;
-						subset = add_bit(subset, bit);
-				}
-			}
-		}
-	}
+	static void calculate_tables(AdjacencyMatrix * g);
 
 public:
 	static Output* perform_calculations(AdjacencyMatrix graph) {
