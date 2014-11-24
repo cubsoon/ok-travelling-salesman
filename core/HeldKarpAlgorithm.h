@@ -1,4 +1,5 @@
-//TO BE IMPLEMENTED
+// HeldKarpAlgorithm.h : Algorytm programowania dynamicznego.
+// https://www.youtube.com/watch?v=zNEQTugO7NM
 
 #pragma once
 #include "algorithms.h"
@@ -43,7 +44,7 @@ private:
 		// Ilosc wierzcholkow bez pierwszego (|V|-1).
 		cols = size - 1;
 		// Ilosc podzbiorow zbioru pozostalych wierzcholkow 2^(|V|-2).
-		rows_s = size - 2;
+		rows_s = size - 1;
 		rows = 2 << rows_s;
 		// Tworzenie tablic.
 		// Tutaj widac zlozonosc pamieciowa O(n*2^n).
@@ -60,16 +61,56 @@ private:
 		return set | (1U << pos);
 	}
 
-	static void calculate_tables(AdjacencyMatrix * g);
+	static unsigned int get_bit(unsigned int set, unsigned int pos) {
+		return set & (1U << pos);
+	}
+
+	static void calculate_tables(AdjacencyMatrix * g) {
+		unsigned int c, r, b;
+		int best, cur;
+		bool one_bit;
+		for (c = 0; c < cols; c++) {
+			B[0][c] = 0;
+		}
+		for (r = 1; r < rows; r++) {
+			for (c = 0; c < cols; c++) {
+				one_bit = false;
+				for (b = 0; b < rows_s; b++) {
+					if ( get_bit(r, b) ) {
+						unsigned int new_set = remove_bit(r, b);
+						if ( !new_set ) {
+							B[r][c] = g->get_weight(0, b+1);
+							one_bit = true;
+							break;
+						}
+						else {
+							best = B[new_set][b] + g->get_weight(b+1, c+1);
+						}
+					}
+				}
+				if ( !one_bit ) {
+					for (; b < rows_s; b++) {
+						if ( get_bit(r, b) ) {
+							unsigned int new_set = remove_bit(r, b);
+							cur = B[new_set][b] + g->get_weight(b+1, c+1);
+							if (cur < best)
+								best = cur;
+						}
+					}
+					B[r][c] = best;
+				}
+			}
+		}
+	}
 
 public:
 	static Output* perform_calculations(AdjacencyMatrix graph) {
 		Output* output = new Output(graph.get_size());
 		create_tables(graph.get_size());
 		calculate_tables(&graph);
-		int min = B[rows-1][0];
+		int min = B[rows-1][0] + graph.get_weight(1, 0);
 		for (unsigned int i = 1; i < cols; i++) {
-			int cur = B[rows-1][i];
+			int cur = B[rows-1][i] + graph.get_weight(i+1, 0);
 			if ( cur < min )
 				min = cur;
 		}

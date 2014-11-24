@@ -75,9 +75,9 @@
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="BranchAndBound.h" />
-    <ClInclude Include="algorithms.h" />
     <ClInclude Include="BruteForce.h" />
+    <ClInclude Include="algorithms.h" />
+    <ClInclude Include="Naive.h" />
     <ClInclude Include="Greedy.h" />
     <ClInclude Include="HeldKarpAlgorithm.h" />
     <ClInclude Include="stdafx.h" />

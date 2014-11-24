@@ -1,109 +1,61 @@
-// BruteForce.h : Algorytm przeszukujacy cala przestrzen rozwiazan.
-//
-// Kolejne permutaje sa generowane algorytmem Steinhausa–Johnsona–Trottera.
-// http://en.wikipedia.org/wiki/Steinhaus%E2%80%93Johnson%E2%80%93Trotter_algorithm
-//
-// Wysiada juz dla 12 wierzcholkow.
+// BruteForce.h : Algorytm rekurencyjnie przeszukujacy zbior rozwiazan,
+// ale nawracajacy przy rozwiazaniach, ktorych koszt czesciowy jest
+// wiekszy niz koszt najlepszego poprzednio znalezionego rozwiazania.
 
 #pragma once
 #include "algorithms.h"
 
 class BruteForceAlgorithm {
 private:
-	// Algorytm SJT definiuje liczbe posiadajaca kierunek.
-	static int* permutation;
-	static int* direction;
-
-	// Poczatkowe ustawienie liczb do permutowania.
-	static void prepare_permutation(int size) {
-		permutation = new int[size];
-		direction = new int[size];
-		for (int i = 0; i < size; i++) {
-			permutation[i] = i;
-			direction[i] = -1;
+	static void BnB(int c[], int c_i, int c_v, int last_used, bool not_used[], int bs[], int * bs_v, AdjacencyMatrix * g) {
+		// warunki zatrzymania
+		if ( c_v >= *bs_v ) {
+			not_used[last_used] = true;
+			return;
 		}
-	}
-
-	// Znajduje najwieksza liczbe "mobilna" (jesli istnieje)
-	static int get_greatest_mobile_int(int size) {
-		int max_i = -1, max_v;
-		int i;
-		for (i = 0; i < size; i++)
-			if (i + direction[i] >= 0 && i + direction[i] < size)
-				if (permutation[i] > permutation[i+direction[i]]) {
-					max_i = i;
-					max_v = permutation[i];
-					break;
-				}
-		for (i++; i < size; i++)
-			if (i + direction[i] >= 0 && i + direction[i] < size)
-				if (permutation[i] > permutation[i+direction[i]])
-					if (permutation[i] > max_v) {
-						max_i = i;
-						max_v = permutation[i];
-					}
-		return max_i;
-	}
-
-	// Generuje nastepna permutacje.
-	static void next_permutation(int mobile, int size) {
-		int v = permutation[mobile];
-		// Indeksy dwoch liczb
-		int	i1 = mobile;
-		int	i2 = mobile+direction[mobile];
-		// Zamien obie liczby (i ich kierunki)
-		int t;
-		t = permutation[i1];
-		permutation[i1] = permutation[i2];
-		permutation[i2] = t;
-		t = direction[i1];
-		direction[i1] = direction[i2];
-		direction[i2] = t;
-		// Odwroc kierunek wszystkich liczb wiekszych od "mobilnej"
-		for (int n = 0; n < size; n++)
-			if (permutation[n] > v)
-				direction[n] *= -1;
-	}
-
-	static int get_sum_of_weights(AdjacencyMatrix *graph) {
-		int sum = 0;
-		int i;
-		for (i = 0; i < graph->get_size()-1; i++) {
-			sum += graph->get_weight(permutation[i], permutation[i+1]);
+		if ( c_i == g->get_size() ) {
+			if ( c_v + g->get_weight(last_used, 0) < *bs_v ) {
+				*bs_v = c_v + g->get_weight(last_used, 0);
+				for (int i = 0; i < g->get_size(); i++)
+					bs[i] = c[i];
+			}
+			return;
 		}
-		sum += graph->get_weight(permutation[i], permutation[0]);
-		return sum;
+		// rekurencja
+		for (int i = 0; i < g->get_size(); i++)
+			if (not_used[i]) {
+				not_used[i] = false;
+				c[c_i] = i;
+				BnB(c, c_i + 1, c_v + g->get_weight(last_used, i), i, not_used, bs, bs_v, g);
+				not_used[i] = true;
+			}
+		return;
 	}
 public:
 	static Output* perform_calculations(AdjacencyMatrix graph) {
-		prepare_permutation(graph.get_size());
-		int i, v;
-		// Pierwsza permutacja - 0 1 2 ... n
-		int *best_permutation = new int[graph.get_size()];
-		for (int n = 0; n < graph.get_size(); n++)
-			best_permutation[n] = permutation[n];
-		int best_v = get_sum_of_weights(&graph);
-		// Dopoki istnieje liczba "mobilna" - istnieja kolejne permutacje.
-		while ( (i = get_greatest_mobile_int(graph.get_size())) >= 0 ) {
-			next_permutation(i, graph.get_size());
-			if ( (v = get_sum_of_weights(&graph)) < best_v ) {
-				best_v = v;
-				for (int n = 0; n  < graph.get_size(); n++)
-					best_permutation[n] = permutation[n];
-			}
-		}
+		// gorna granica
+		int bs_v = INT_MAX;
+		// tablice: robocza i z najlepszym rozwiazaniem
+		int * c = new int[graph.get_size()];
+		int * bs = new int[graph.get_size()];
+		// tablica uzytych wierzcholkow
+		bool * not_used = new bool[graph.get_size()];
+		for (int i = 1; i < graph.get_size(); i++)
+			not_used[i] = true;
+		// pierwszy wierzcholek - 0
+		not_used[0] = false;
+		c[0] = 0;
+		BnB(c, 1, 0, 0, not_used, bs, &bs_v, &graph);
 		// wyjscie
-		Output* output = new Output(graph.get_size());
-		for (int n = 0; n < graph.get_size(); n++)
-			output->push_cycle(best_permutation[n]);
-		output->set_value(best_v);
+		Output* output = new Output( graph.get_size() );
+		for (int i = 0; i < graph.get_size(); i++)
+			output->push_cycle(bs[i]);
+		output->set_value(bs_v);
 
-		delete [] best_permutation;
-		delete [] permutation;
-		delete [] direction;
+		delete [] c;
+		delete [] bs;
+		delete [] not_used;
 		return output;
 	}
 };
 
-int *BruteForceAlgorithm::permutation = NULL;
-int *BruteForceAlgorithm::direction = NULL;

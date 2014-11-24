@@ -3,8 +3,11 @@
 
 #include "stdafx.h"
 #include "algorithms.h"
+
+// * ZAINCLUDUJ PLIK Z ALGORYTMEM *
+//
 #include "Greedy.h"
-#include "BranchAndBound.h"
+#include "Naive.h"
 #include "BruteForce.h"
 #include "HeldKarpAlgorithm.h"
 
@@ -31,10 +34,12 @@ void print_usage(char argv0[]) {
 	cout << "\t\t" << "Prints algorithm's result." << endl;
 }
 
+// * DODAJ STALA NAZWE ALGORYTMU *
+//
 #define A_GREEDY ("greedy")
-#define A_BNB ("branchandbound")
+#define A_N ("naive")
 #define A_BF ("bruteforce")
-#define A_HKA ("heldkarp")
+#define A_HK ("heldkarp")
 
 int main(int argc, char* argv[])
 {
@@ -69,11 +74,13 @@ int main(int argc, char* argv[])
 				break;
 			}
 		}
+		// * DODAJ NAZWE DO WARUNKU *
+		//
 		// === PARSING ALGORITHM NAME ===
 		else if (strcmp(argv[n], A_GREEDY) == 0 ||
-				 strcmp(argv[n], A_BNB) == 0 ||
+				 strcmp(argv[n], A_N) == 0 ||
 				 strcmp(argv[n], A_BF) == 0 ||
-				 strcmp(argv[n], A_HKA) == 0)
+				 strcmp(argv[n], A_HK) == 0)
 			algorithm_name = argv[n];
 		// ==============================
 		else if (strcmp(argv[n], "file") == 0) {
@@ -167,16 +174,18 @@ int main(int argc, char* argv[])
 
 		
 		Output *output;
+		// * WYKONAJ ALGORYTM *
+		//
 		// === CREATING ALGORITHM OBJECT ===
 		if (algorithm_name == NULL)
 			output = PlaceholderAlgorithm::perform_calculations(*graph);
 		else if (strcmp(algorithm_name, A_GREEDY) == 0)
 			output = GreedyAlgorithm::perform_calculations(*graph);
-		else if (strcmp(algorithm_name, A_BNB) == 0)
-			output = BranchAndBoundAlgorithm::perform_calculations(*graph);
+		else if (strcmp(algorithm_name, A_N) == 0)
+			output = NaiveAlgorithm::perform_calculations(*graph);
 		else if (strcmp(algorithm_name, A_BF) == 0)
 			output = BruteForceAlgorithm::perform_calculations(*graph);
-		else if (strcmp(algorithm_name, A_HKA) == 0)
+		else if (strcmp(algorithm_name, A_HK) == 0)
 			output = HeldKarpAlgorithm::perform_calculations(*graph);
 		// =================================
 

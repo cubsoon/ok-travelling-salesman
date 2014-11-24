@@ -1,3 +1,6 @@
+// Greedy.h : Algorytm znajdyjacy cykl od wiercholka 0,
+// wybierajacy najblizsze niewykorzystane wierzcholki.
+
 #pragma once
 #include "algorithms.h"
  

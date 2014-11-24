@@ -30,13 +30,13 @@
     <ClInclude Include="Greedy.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="BranchAndBound.h">
+    <ClInclude Include="HeldKarpAlgorithm.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Naive.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="BruteForce.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="HeldKarpAlgorithm.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
