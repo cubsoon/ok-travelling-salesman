@@ -3,7 +3,7 @@
 // Kolejne permutaje sa generowane algorytmem Steinhausa–Johnsona–Trottera.
 // http://en.wikipedia.org/wiki/Steinhaus%E2%80%93Johnson%E2%80%93Trotter_algorithm
 //
-// Wysiada juz dla 12 wierzcholkow.
+// Wysiada juz dla ~12 wierzcholkow.
 
 #pragma once
 #include "algorithms.h"
@@ -65,7 +65,7 @@ private:
 				direction[n] *= -1;
 	}
 
-	static int get_sum_of_weights(AdjacencyMatrix *graph) {
+	static int get_sum_of_weights(Graph *graph) {
 		int sum = 0;
 		int i;
 		for (i = 0; i < graph->get_size()-1; i++) {
@@ -75,7 +75,7 @@ private:
 		return sum;
 	}
 public:
-	static Output* perform_calculations(AdjacencyMatrix graph) {
+	static Cycle* perform_calculations(Graph graph) {
 		prepare_permutation(graph.get_size());
 		int i, v;
 		// Pierwsza permutacja - 0 1 2 ... n
@@ -93,10 +93,10 @@ public:
 			}
 		}
 		// wyjscie
-		Output* output = new Output(graph.get_size());
+		Cycle* output = new Cycle(graph.get_size());
 		for (int n = 0; n < graph.get_size(); n++)
-			output->push_cycle(best_permutation[n]);
-		output->set_value(best_v);
+			output->push_node(best_permutation[n]);
+		output->set_cycle_lenght(best_v);
 
 		delete [] best_permutation;
 		delete [] permutation;

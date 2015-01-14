@@ -10,6 +10,8 @@
 #include "Naive.h"
 #include "BruteForce.h"
 #include "HeldKarpAlgorithm.h"
+#include "ACS.h"
+
 
 using namespace std;
 
@@ -40,6 +42,7 @@ void print_usage(char argv0[]) {
 #define A_N ("naive")
 #define A_BF ("bruteforce")
 #define A_HK ("heldkarp")
+#define A_ACS ("acs")
 
 int main(int argc, char* argv[])
 {
@@ -80,7 +83,8 @@ int main(int argc, char* argv[])
 		else if (strcmp(argv[n], A_GREEDY) == 0 ||
 				 strcmp(argv[n], A_N) == 0 ||
 				 strcmp(argv[n], A_BF) == 0 ||
-				 strcmp(argv[n], A_HK) == 0)
+				 strcmp(argv[n], A_HK) == 0 ||
+				 strcmp(argv[n], A_ACS) == 0)
 			algorithm_name = argv[n];
 		// ==============================
 		else if (strcmp(argv[n], "file") == 0) {
@@ -160,20 +164,20 @@ int main(int argc, char* argv[])
 				cout << "drukuj graf: " << print_graph << endl << endl;
 		}
 
-		AdjacencyMatrix *graph;
+		Graph *graph;
 		if (source==STDIN)
-			graph = new AdjacencyMatrix(&cin);
+			graph = new Graph(&cin);
 		else if (source==FILE) {
 			istream *input_file = new ifstream(input_file_name);
-			graph = new AdjacencyMatrix(input_file);
+			graph = new Graph(input_file);
 			delete input_file;
 		}
 		else if (source==GENERATION) {
-			graph = new AdjacencyMatrix(gargv[0], gargv[1], gargv[2]);
+			graph = new Graph(gargv[0], gargv[1], gargv[2]);
 		}
 
 		
-		Output *output;
+		Cycle *output;
 		// * WYKONAJ ALGORYTM *
 		//
 		// === CREATING ALGORITHM OBJECT ===
@@ -187,6 +191,8 @@ int main(int argc, char* argv[])
 			output = BruteForceAlgorithm::perform_calculations(*graph);
 		else if (strcmp(algorithm_name, A_HK) == 0)
 			output = HeldKarpAlgorithm::perform_calculations(*graph);
+		else if (strcmp(algorithm_name, A_ACS) == 0)
+			output = ACSAlgorithm::perform_calculations(*graph);
 		// =================================
 
 		if (print_graph)
@@ -199,11 +205,11 @@ int main(int argc, char* argv[])
 		}
 
 		if (print_result)
-			output->print_result(&cout, verbose);
+			output->print_cycle(&cout, verbose);
 
 		if (save_result_to_file) {
 			ofstream* output_file = new ofstream(output_result_file_name);
-			output->print_result(output_file, false);
+			output->print_cycle(output_file, false);
 		}
 
 		delete output; 

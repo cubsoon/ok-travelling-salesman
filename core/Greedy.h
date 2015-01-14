@@ -6,8 +6,8 @@
  
 class GreedyAlgorithm {
 public:
-	static Output* perform_calculations(AdjacencyMatrix graph) {
-		Output *output = new Output(graph.get_size());
+	static Cycle* perform_calculations(Graph graph) {
+		Cycle *output = new Cycle(graph.get_size());
 		
 		// tablica odwiedzonych wierzcholkow
 		bool *used = new bool[graph.get_size()];
@@ -17,7 +17,7 @@ public:
 		// pierwszy odwiedzony wierzcholek - indeks 0
 		used[0] = true;
 		int last = 0;
-		output->push_cycle(0);
+		output->push_node(0);
 
 		int min_v, min_i;
 		int sum_v = 0;
@@ -41,13 +41,13 @@ public:
 			// dodawanie kolejnych wierzcholkow do cyklu
 			used[min_i] = true;
 			last = min_i;
-			output->push_cycle(min_i);
+			output->push_node(min_i);
 		}
 
 		// droga z ostatniego wiercholka do pierwszego (0)
 		sum_v += graph.get_weight(last, 0);
 
-		output->set_value(sum_v);
+		output->set_cycle_lenght(sum_v);
 		return output;
 	}
 };

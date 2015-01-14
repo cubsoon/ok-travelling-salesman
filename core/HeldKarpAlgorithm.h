@@ -34,95 +34,65 @@ private:
 	// Rozwiazanie TSP to wartosc minimalna:
 	// B[0b111][n] + koszt( (n+1), (0) ),   dla n = {0, 1, 2, 3}
 	// ===================
-	static int ** B;
-	static int ** L;
+
+	static int ** stored_B;
 	static unsigned int rows;
-	static unsigned int rows_s;
 	static unsigned int cols;
+	static unsigned int bits;
 
-	static void create_tables(int size) {
-		// Ilosc wierzcholkow bez pierwszego (|V|-1).
-		cols = size - 1;
-		// Ilosc podzbiorow zbioru pozostalych wierzcholkow 2^(|V|-2).
-		rows_s = size - 1;
-		rows = 2 << rows_s;
-		// Tworzenie tablic.
-		// Tutaj widac zlozonosc pamieciowa O(n*2^n).
-		B = new int * [rows];
-		for (unsigned int i = 0; i < rows; i++)
-			B[i] = new int[cols];
-	}
+	static void make_tables(Graph * g) {
+		cols = g->get_size() - 1;
+		bits = g->get_size() - 1;
+		rows = 1 << bits;
 
-	static unsigned int remove_bit(unsigned int set, unsigned int pos) {
-		return set & ~(1U << pos);
-	}
-
-	static unsigned int add_bit(unsigned int set, unsigned int pos) {
-		return set | (1U << pos);
-	}
-
-	static unsigned int get_bit(unsigned int set, unsigned int pos) {
-		return set & (1U << pos);
-	}
-
-	static void calculate_tables(AdjacencyMatrix * g) {
-		unsigned int c, r, b;
-		int best, cur;
-		bool one_bit;
-		for (c = 0; c < cols; c++) {
-			B[0][c] = 0;
+		stored_B = new int * [cols];
+		for (unsigned int c = 0; c < cols; c++) {
+			stored_B[c] = new int [rows];
+			for (unsigned int r = 0; r < rows; r++)
+				stored_B[c][r] = -1;
 		}
-		for (r = 1; r < rows; r++) {
-			for (c = 0; c < cols; c++) {
-				one_bit = false;
-				for (b = 0; b < rows_s; b++) {
-					if ( get_bit(r, b) ) {
-						unsigned int new_set = remove_bit(r, b);
-						if ( !new_set ) {
-							B[r][c] = g->get_weight(0, b+1);
-							one_bit = true;
-							break;
-						}
-						else {
-							best = B[new_set][b] + g->get_weight(b+1, c+1);
-						}
-					}
-				}
-				if ( !one_bit ) {
-					for (; b < rows_s; b++) {
-						if ( get_bit(r, b) ) {
-							unsigned int new_set = remove_bit(r, b);
-							cur = B[new_set][b] + g->get_weight(b+1, c+1);
-							if (cur < best)
-								best = cur;
-						}
-					}
-					B[r][c] = best;
-				}
+	}
+
+	static int B(Graph * g, unsigned int set, int target) {
+		if (stored_B[target][set] != -1)
+			return stored_B[target][set];
+		
+		if (set == (1U << (bits+1)) - 1) 
+			return g->get_weight(target+1, 0);
+
+		int best, cur;
+		unsigned int b;
+		for (b = 0; b < bits; b++) {
+			best = 2000000;
+			if (b != target && (set & (1 << b)) == 0) {
+				cur = g->get_weight(target+1, b+1) + B(g, set | (1U << b), b);
+				if (cur < best)
+					best = cur;
 			}
 		}
+		return stored_B[target][set] = best;
 	}
 
 public:
-	static Output* perform_calculations(AdjacencyMatrix graph) {
-		Output* output = new Output(graph.get_size());
-		create_tables(graph.get_size());
-		calculate_tables(&graph);
-		int min = B[rows-1][0] + graph.get_weight(1, 0);
-		for (unsigned int i = 1; i < cols; i++) {
-			int cur = B[rows-1][i] + graph.get_weight(i+1, 0);
+	static Cycle* perform_calculations(Graph graph) {
+		Cycle* output = new Cycle(graph.get_size());
+		make_tables(&graph);
+		int min = 1000000;
+		for (unsigned int i = 0; i < cols; i++) {
+			int cur = B(&graph, 1U << i, i);
+			std::cout << cur << std::endl;
 			if ( cur < min )
 				min = cur;
 		}
-		output->set_value(min);
+		output->set_cycle_lenght(min);
 		return output;
 	}
 };
 
-int ** HeldKarpAlgorithm::B = NULL;
-int ** HeldKarpAlgorithm::L = NULL;
-unsigned int HeldKarpAlgorithm::cols = 0;
+int ** HeldKarpAlgorithm::stored_B = NULL;
 unsigned int HeldKarpAlgorithm::rows = 0;
-unsigned int HeldKarpAlgorithm::rows_s = 0;
+unsigned int HeldKarpAlgorithm::cols = 0;
+unsigned int HeldKarpAlgorithm::bits = 0;
+
 
 

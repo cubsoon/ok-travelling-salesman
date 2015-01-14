@@ -7,7 +7,7 @@
 
 class BruteForceAlgorithm {
 private:
-	static void BnB(int c[], int c_i, int c_v, int last_used, bool not_used[], int bs[], int * bs_v, AdjacencyMatrix * g) {
+	static void BnB(int c[], int c_i, int c_v, int last_used, bool not_used[], int bs[], int * bs_v, Graph * g) {
 		// warunki zatrzymania
 		if ( c_v >= *bs_v ) {
 			not_used[last_used] = true;
@@ -32,7 +32,7 @@ private:
 		return;
 	}
 public:
-	static Output* perform_calculations(AdjacencyMatrix graph) {
+	static Cycle* perform_calculations(Graph graph) {
 		// gorna granica
 		int bs_v = INT_MAX;
 		// tablice: robocza i z najlepszym rozwiazaniem
@@ -47,10 +47,10 @@ public:
 		c[0] = 0;
 		BnB(c, 1, 0, 0, not_used, bs, &bs_v, &graph);
 		// wyjscie
-		Output* output = new Output( graph.get_size() );
+		Cycle* output = new Cycle( graph.get_size() );
 		for (int i = 0; i < graph.get_size(); i++)
-			output->push_cycle(bs[i]);
-		output->set_value(bs_v);
+			output->push_node(bs[i]);
+		output->set_cycle_lenght(bs_v);
 
 		delete [] c;
 		delete [] bs;

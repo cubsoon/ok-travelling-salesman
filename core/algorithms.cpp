@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "algorithms.h"
 
-AdjacencyMatrix::AdjacencyMatrix(int number_of_nodes, int min_distance, int max_distance) {
+Graph::Graph(int number_of_nodes, int min_distance, int max_distance) {
 	srand((unsigned int)(time(time_t(0))));
 
 	this->size = number_of_nodes;
@@ -9,114 +9,132 @@ AdjacencyMatrix::AdjacencyMatrix(int number_of_nodes, int min_distance, int max_
 
 	for (int i = 0; i < number_of_nodes; i++) {
 		for (int j = 0; j < i; j++) {
-			matrix[i][j] = min_distance + rand()%(max_distance - min_distance + 1);
-			matrix[j][i] = matrix[i][j];
+			weighted_adjacency_matrix[i][j] = min_distance + rand()%(max_distance - min_distance + 1);
+			weighted_adjacency_matrix[j][i] = weighted_adjacency_matrix[i][j];
 		}
-		matrix[i][i] = INT_MAX;
+		weighted_adjacency_matrix[i][i] = 0;
 	}
 }
 
-AdjacencyMatrix::AdjacencyMatrix(std::istream *input) {
+Graph::Graph(std::istream *input) {
 	*input >> this->size;
 	_allocate_matrix(size);
 	for (int i = 0; i < size; i++)
 		for (int j = 0; j < size; j++)
-			*input >> matrix[i][j];
+			*input >> weighted_adjacency_matrix[i][j];
 }
 
-AdjacencyMatrix::AdjacencyMatrix(AdjacencyMatrix &other) {
+Graph::Graph(Graph &other) {
 	this->size = other.size;
 	_allocate_matrix(this->size);
 	for (int i = 0; i < this->size; i++)
 	for (int j = 0; j < this->size; j++)
-		matrix[i][j] = other.matrix[i][j];
+		weighted_adjacency_matrix[i][j] = other.weighted_adjacency_matrix[i][j];
 }
 
-void AdjacencyMatrix::_allocate_matrix(int size) {
-	this->matrix = new int*[size];
+void Graph::_allocate_matrix(int size) {
+	this->weighted_adjacency_matrix = new int*[size];
 	for (int i = 0; i < size; i++)
-		this->matrix[i] = new int[size];
+		this->weighted_adjacency_matrix[i] = new int[size];
 }
 
-void AdjacencyMatrix::_deallocate_matrix() {
+void Graph::_deallocate_matrix() {
 	for (int i = 0; i < this->size; i++)
-		delete [] this->matrix[i];
-	delete [] this->matrix;
+		delete [] this->weighted_adjacency_matrix[i];
+	delete [] this->weighted_adjacency_matrix;
 }
 
-AdjacencyMatrix::~AdjacencyMatrix() {
+Graph::~Graph() {
 	_deallocate_matrix();
 }
 
-int AdjacencyMatrix::get_size() {
+int Graph::get_size() {
 	return this->size;
 }
 
-int AdjacencyMatrix::get_weight(int from, int to) {
-	return this->matrix[from][to];
+int Graph::get_weight(int from, int to) {
+	return this->weighted_adjacency_matrix[from][to];
 }
 
 
 
-Output::Output(int size_of_cycle) {
+Cycle::Cycle(int node_vector_lenght) {
 	current = 0;
-	this->size_of_cycle = size_of_cycle;
-	this->cycle = new int[size_of_cycle];
+	cycle_lenght = 0;
+	this->node_vector_lenght = node_vector_lenght;
+	this->node_vector = new int[node_vector_lenght];
+	for (int i = 0; i < node_vector_lenght; i++)
+		this->node_vector[i] = -1;
 }
 
-Output::Output(Output &other) {
-	this->size_of_cycle = other.size_of_cycle;
+Cycle::Cycle(const Cycle &other) {
+	this->node_vector_lenght = other.node_vector_lenght;
 	this->current = other.current;
-	this->cycle = new int[this->size_of_cycle];
-	for (int i = 0; i < current; i++)
-		this->cycle[i] = other.cycle[i];
+	this->cycle_lenght = other.cycle_lenght;
+	this->node_vector = new int[this->node_vector_lenght];
+	for (int i = 0; i < this->current; i++)
+		this->node_vector[i] = other.node_vector[i];
 }
 
-Output::~Output() {
-	delete [] cycle;
+Cycle &Cycle::operator=(const Cycle &other) {
+    this->node_vector_lenght = other.node_vector_lenght;
+	this->current = other.current;
+	this->cycle_lenght = other.cycle_lenght;
+	for (int i = 0; i < this->current; i++)
+		this->node_vector[i] = other.node_vector[i];
+    return *this;
+  }
+
+Cycle::~Cycle() {
+	delete [] node_vector;
 }
 
-void Output::push_cycle(int node) {
-		cycle[current] = node;
+void Cycle::clear_cycle() {
+	this->current = 0;
+	this->cycle_lenght = 0;
+}
+
+void Cycle::push_node(int node) {
+		node_vector[current] = node;
 		current++;
 }
 
-int Output::pop_cycle() {
+int Cycle::pop_node() {
 		current--;
-		return cycle[current+1];
+		return node_vector[current+1];
 }
 
-void Output::print_result(std::ostream *output, bool verbose) {
+void Cycle::print_cycle(std::ostream *output, bool verbose) {
 	if (verbose) *output << "Liczba elementow cyklu: ";
-	*output << size_of_cycle << std::endl;
+	*output << node_vector_lenght << std::endl;
 	if (verbose) *output << "Cykl: ";
-	for (int i = 0; i < size_of_cycle; i++)
-		*output << cycle[i] << " ";
+	for (int i = 0; i < node_vector_lenght; i++)
+		*output << node_vector[i] << " ";
 	*output << std::endl;
 	if (verbose) *output << "Wartosc cyklu: ";
-	*output << value << std::endl;
+	*output << cycle_lenght << std::endl;
 }
 
-void AdjacencyMatrix::print_graph(std::ostream *output, bool verbose) {
+void Graph::print_graph(std::ostream *output, bool verbose) {
 	if (verbose) *output << "Liczba wierzcholkow: ";
 	*output << this->size << std::endl;
 	if (verbose) *output << "Macierz grafu:" << std::endl;
 	for (int i = 0; i < this->size; i++) {
 		for (int j = 0; j < this->size; j++)
-			*output << matrix[i][j] << " ";
+			*output << weighted_adjacency_matrix[i][j] << " ";
 		*output << std::endl;
 	}
 	*output << std::endl;
 }
 
-Output* PlaceholderAlgorithm::perform_calculations(AdjacencyMatrix graph) {
-	Output *output = new Output(graph.get_size());
-	int value = 0;
+Cycle* PlaceholderAlgorithm::perform_calculations(Graph graph) {
+	Cycle *output = new Cycle(graph.get_size());
+	int cycle_lenght = 0;
 	for (int i = 0; i < graph.get_size(); i++)
 	{
-		output->push_cycle(i);
-		value += graph.get_weight(i, (i+1)%graph.get_size());
+		output->push_node(i);
+		cycle_lenght += graph.get_weight(i, (i+1)%graph.get_size());
 	}
-	output->set_value(value);
+	output->set_cycle_lenght(cycle_lenght);
 	return output;
 }

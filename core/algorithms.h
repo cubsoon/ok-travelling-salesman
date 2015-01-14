@@ -2,34 +2,38 @@
 
 #include "stdafx.h"
 
-class Output {
+class Cycle {
 private:
 	int current;
-	int *cycle;
-	int size_of_cycle;
-	int value;
+	int *node_vector;
+	int node_vector_lenght;
+	int cycle_lenght;
 public:
-	Output(int);
-	Output(Output &);
-	~Output();
-	void set_value(int i) {value = i;};
-	void push_cycle(int);
-	int pop_cycle();
-	void print_result(std::ostream*, bool);
+	Cycle(int);
+	Cycle(const Cycle &);
+	~Cycle();
+	Cycle &operator=(const Cycle &);
+	void set_cycle_lenght(int l) {cycle_lenght = l;};
+	void add_cycle_lenght(int l) {cycle_lenght += l;};
+	int get_cycle_lenght() {return cycle_lenght;};
+	void clear_cycle();
+	void push_node(int);
+	int pop_node();
+	void print_cycle(std::ostream*, bool);
 };
 
 
-class AdjacencyMatrix {
+class Graph {
 private:
 	void _allocate_matrix(int);
 	void _deallocate_matrix();
-	int **matrix;
+	int **weighted_adjacency_matrix;
 	int size;
 public:
-	AdjacencyMatrix(int, int, int);
-	AdjacencyMatrix(std::istream*);
-	AdjacencyMatrix(AdjacencyMatrix &);
-	~AdjacencyMatrix();
+	Graph(int, int, int);
+	Graph(std::istream*);
+	Graph(Graph &);
+	~Graph();
 	int get_size();
 	int get_weight(int, int);
 	void print_graph(std::ostream*, bool verbose);
@@ -37,5 +41,5 @@ public:
 
 class PlaceholderAlgorithm {
 public:
-	static Output* perform_calculations(AdjacencyMatrix);
+	static Cycle* perform_calculations(Graph);
 };
