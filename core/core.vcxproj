@@ -72,9 +72,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <None Include="ReadMe.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="ACS.h" />
     <ClInclude Include="BruteForce.h" />
     <ClInclude Include="algorithms.h" />
