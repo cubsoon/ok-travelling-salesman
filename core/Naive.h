@@ -1,4 +1,4 @@
-// Naive.h : Algorytm przeszukujacy cala przestrzen rozwiazan.
+// Naive.h : Algorytm naiwnie przeszukujacy cala przestrzen rozwiazan.
 //
 // Kolejne permutaje sa generowane algorytmem Steinhausa–Johnsona–Trottera.
 // http://en.wikipedia.org/wiki/Steinhaus%E2%80%93Johnson%E2%80%93Trotter_algorithm
@@ -14,7 +14,7 @@ private:
 	static int* permutation;
 	static int* direction;
 
-	// Poczatkowe ustawienie liczb do permutowania.
+	// SJT - Poczatkowe ustawienie liczb do permutowania.
 	static void prepare_permutation(int size) {
 		permutation = new int[size];
 		direction = new int[size];
@@ -24,7 +24,7 @@ private:
 		}
 	}
 
-	// Znajduje najwieksza liczbe "mobilna" (jesli istnieje)
+	// SJT - Znajduje najwieksza liczbe "mobilna" (jesli istnieje)
 	static int get_greatest_mobile_int(int size) {
 		int max_i = -1, max_v;
 		int i;
@@ -45,7 +45,7 @@ private:
 		return max_i;
 	}
 
-	// Generuje nastepna permutacje.
+	// Generuje nastepna permutacje (wg algorytmu SJT).
 	static void next_permutation(int mobile, int size) {
 		int v = permutation[mobile];
 		// Indeksy dwoch liczb
@@ -65,6 +65,7 @@ private:
 				direction[n] *= -1;
 	}
 
+	// Zwraca wage obecnej permutacji.
 	static int get_sum_of_weights(Graph *graph) {
 		int sum = 0;
 		int i;
@@ -76,13 +77,15 @@ private:
 	}
 public:
 	static Cycle* perform_calculations(Graph graph) {
-		prepare_permutation(graph.get_size());
 		int i, v;
+
 		// Pierwsza permutacja - 0 1 2 ... n
+		prepare_permutation(graph.get_size());
 		int *best_permutation = new int[graph.get_size()];
 		for (int n = 0; n < graph.get_size(); n++)
 			best_permutation[n] = permutation[n];
 		int best_v = get_sum_of_weights(&graph);
+
 		// Dopoki istnieje liczba "mobilna" - istnieja kolejne permutacje.
 		while ( (i = get_greatest_mobile_int(graph.get_size())) >= 0 ) {
 			next_permutation(i, graph.get_size());
@@ -92,6 +95,7 @@ public:
 					best_permutation[n] = permutation[n];
 			}
 		}
+
 		// wyjscie
 		Cycle* output = new Cycle(graph.get_size());
 		for (int n = 0; n < graph.get_size(); n++)
@@ -101,6 +105,7 @@ public:
 		delete [] best_permutation;
 		delete [] permutation;
 		delete [] direction;
+
 		return output;
 	}
 };
