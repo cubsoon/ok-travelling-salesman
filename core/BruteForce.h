@@ -7,7 +7,7 @@
 
 class BruteForceAlgorithm {
 private:
-	static void BnB(int c[], int c_i, int c_v, int last_used, bool not_used[], int bs[], int * bs_v, Graph * g) {
+	static void BF(int c[], int c_i, int c_v, int last_used, bool not_used[], int bs[], int * bs_v, Graph * g) {
 		// -- warunki nawracania --
 		// czesciowe rozwiazanie jest gorsze
 		if ( c_v >= *bs_v ) {
@@ -29,7 +29,7 @@ private:
 			if (not_used[i]) {
 				not_used[i] = false;
 				c[c_i] = i;
-				BnB(c, c_i + 1, c_v + g->get_weight(last_used, i), i, not_used, bs, bs_v, g);
+				BF(c, c_i + 1, c_v + g->get_weight(last_used, i), i, not_used, bs, bs_v, g);
 				//         ^                 ^                     ^
 				// zaglebienie rekurencji    |         ostatnio uzyty wierzcholek
 				//            nowa wartosc czesciowego rozwiazania
@@ -47,7 +47,7 @@ public:
 			not_used[i] = true;                       //
 		not_used[0] = false; // przeszukiwanie zaczynamy od wierzcholka '0'
 		c[0] = 0;            //
-		BnB(c, 1, 0, 0, not_used, bs, &bs_v, &graph);
+		BF(c, 1, 0, 0, not_used, bs, &bs_v, &graph);
 		
 		Cycle* output = new Cycle( graph.get_size() ); // wyjscie algorytmu
 		for (int i = 0; i < graph.get_size(); i++)     //

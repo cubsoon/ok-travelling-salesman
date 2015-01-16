@@ -21,6 +21,8 @@
 1520 1090 350 1300 350 2740 1600 2870 130 1660 2210 2220 1400 660 890 780 2210 1050 370 0
 
 Dwadziescia stolic europejskich, w kolejnosci:
+(wkleiæ w pythona)
+
 ['Ateny', 'Berlin', 'Bratys\xb3awa', 'Bruksela', 'Budapeszt', 
 'Helsinki', 'Kopenhaga', 'Lisbona', 'Ljubljana', 'Londyn', 
 'Madryt', 'Oslo', 'Pary\xbf', 'Praga', 'Rzym', 'Sofia', 

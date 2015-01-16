@@ -96,6 +96,6 @@ public:
 };
 
 float **ACSAlgorithm::ph_matrix = NULL;
-float ACSAlgorithm::PH_PER_EDGE = 1000.0f;
+float ACSAlgorithm::PH_PER_EDGE = 500.0f;
 float ACSAlgorithm::PH_AT_BEGINNING = 1.0f;
-int ACSAlgorithm::NUMBER_OF_ANTS = 10000;
+int ACSAlgorithm::NUMBER_OF_ANTS = 20000;
