@@ -9,7 +9,7 @@
 #include "Greedy.h"
 #include "Naive.h"
 #include "BruteForce.h"
-#include "HeldKarpAlgorithm.h"
+#include "Bellman.h"
 #include "ACS.h"
 
 
@@ -41,7 +41,7 @@ void print_usage(char argv0[]) {
 #define A_GREEDY ("greedy")
 #define A_N ("naive")
 #define A_BF ("bruteforce")
-#define A_HK ("heldkarp")
+#define A_BM ("bellman")
 #define A_ACS ("acs")
 
 int main(int argc, char* argv[])
@@ -83,7 +83,7 @@ int main(int argc, char* argv[])
 		else if (strcmp(argv[n], A_GREEDY) == 0 ||
 				 strcmp(argv[n], A_N) == 0 ||
 				 strcmp(argv[n], A_BF) == 0 ||
-				 strcmp(argv[n], A_HK) == 0 ||
+				 strcmp(argv[n], A_BM) == 0 ||
 				 strcmp(argv[n], A_ACS) == 0)
 			algorithm_name = argv[n];
 		// ==============================
@@ -189,7 +189,7 @@ int main(int argc, char* argv[])
 			output = NaiveAlgorithm::perform_calculations(*graph);
 		else if (strcmp(algorithm_name, A_BF) == 0)
 			output = BruteForceAlgorithm::perform_calculations(*graph);
-		else if (strcmp(algorithm_name, A_HK) == 0)
+		else if (strcmp(algorithm_name, A_BM) == 0)
 			output = HeldKarpAlgorithm::perform_calculations(*graph);
 		else if (strcmp(algorithm_name, A_ACS) == 0)
 			output = ACSAlgorithm::perform_calculations(*graph);

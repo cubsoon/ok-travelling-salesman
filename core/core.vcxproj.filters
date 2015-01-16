@@ -27,9 +27,6 @@
     <ClInclude Include="Greedy.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="HeldKarpAlgorithm.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Naive.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -37,6 +34,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ACS.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Bellman.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
