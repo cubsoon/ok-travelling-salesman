@@ -5,7 +5,7 @@
 #pragma once
 #include "algorithms.h"
 
-class HeldKarpAlgorithm {
+class BellmanAlgorithm {
 private:
 	
 	static int ** stored_B;
@@ -106,11 +106,11 @@ public:
 	}
 };
 
-int ** HeldKarpAlgorithm::stored_B = NULL;
-int ** HeldKarpAlgorithm::stored_L = NULL;
-unsigned int HeldKarpAlgorithm::rows = 0U;
-unsigned int HeldKarpAlgorithm::cols = 0U;
-unsigned int HeldKarpAlgorithm::bits = 0U;
+int ** BellmanAlgorithm::stored_B = NULL;
+int ** BellmanAlgorithm::stored_L = NULL;
+unsigned int BellmanAlgorithm::rows = 0U;
+unsigned int BellmanAlgorithm::cols = 0U;
+unsigned int BellmanAlgorithm::bits = 0U;
 
 
 

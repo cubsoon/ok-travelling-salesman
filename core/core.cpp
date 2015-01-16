@@ -190,7 +190,7 @@ int main(int argc, char* argv[])
 		else if (strcmp(algorithm_name, A_BF) == 0)
 			output = BruteForceAlgorithm::perform_calculations(*graph);
 		else if (strcmp(algorithm_name, A_BM) == 0)
-			output = HeldKarpAlgorithm::perform_calculations(*graph);
+			output = BellmanAlgorithm::perform_calculations(*graph);
 		else if (strcmp(algorithm_name, A_ACS) == 0)
 			output = ACSAlgorithm::perform_calculations(*graph);
 		// =================================
